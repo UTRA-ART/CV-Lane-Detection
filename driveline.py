@@ -129,10 +129,8 @@ class Lane():
         # offset : adds padding onto the roi points so the warped image is
         #          larger than the roi. Supplied as (width, height) padding
         # returns : the warped perspective image with the supplied points
-
         if roi_pts is None:
             roi_pts = self.roi_pts
-
         if location_pts is None:
             location_pts = np.float32([[padding[0], self.h-padding[1]], # bot-left
                                        [padding[0], padding[1]], # top-left

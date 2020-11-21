@@ -38,40 +38,40 @@ def lane_pipeline(img, show_roi=False, show_lane=True, display_curve=True):
     # return : original image with added features and fount lane location
 
     # find the edges in the image for line detection
-    pipe_img = Lane.driving_lane(img)
+    pipe_img = Lane.driving_lane(Lane, img)
     # Warp the image using OpenCV warpPerspective()
-    warped = Lane.warp_image(pipe_img)
+    warped = Lane.warp_image(Lane, pipe_img)
 
     # get the polynomials of the lane lines
-    left_fit, right_fit = Lane.lane_lines(warped, plot_line=False)
+    left_fit, right_fit = Lane.lane_lines(Lane, warped, plot_line=False)
 
     # get the moving average for the line data
-    Lane.left_fit = Lane.left_fit_filter.moving_average(left_fit)
-    Lane.right_fit = Lane.right_fit_filter.moving_average(right_fit)
+    Lane.left_fit = Lane.left_fit_filter.moving_average(Lane, left_fit)
+    Lane.right_fit = Lane.right_fit_filter.moving_average(Lane, right_fit)
 
     # find the x and y points for the found quadratics
-    Lane.quadratic_line(0, Lane.h, left_fit, right_fit, plot=False)
+    Lane.quadratic_line(Lane, 0, Lane.h, left_fit, right_fit, plot=False)
 
     if show_roi:
         # draw the region of interest on the image
-        img = Lane.draw_lane_roi(img, color=(255, 0, 0))
+        img = Lane.draw_lane_roi(Lane, img, color=(255, 0, 0))
 
     if show_lane:
         # draw the overlay onto the image
-        img = Lane.overlay_lane(img)
+        img = Lane.overlay_lane(Lane, img)
 
     if display_curve:
         try:
-            c_rad = Lane.lane_lines_radius(Lane.h)
-            Lane.corner_rad = Lane.rad_filter.moving_average(c_rad)
+            c_rad = Lane.lane_lines_radius(Lane, Lane.h)
+            Lane.corner_rad = Lane.rad_filter.moving_average(Lane, c_rad)
         except:
             Lane.corner_rad = 0
 
-        car_off_center = Lane.car_lane_pos()
+        car_off_center = Lane.car_lane_pos(Lane)
 
         # add the curviture and vehicle position to the image
-        Lane.display_text(img, 'Curve Radius : {:.0f}m'.format(Lane.corner_rad), (10, 40))
-        Lane.display_text(img, 'Left of center : {:.3f}m'.format(car_off_center), (10, 90))
+        Lane.display_text(Lane, img, 'Curve Radius : {:.0f}m'.format(Lane.corner_rad), (10, 40))
+        Lane.display_text(Lane, img, 'Left of center : {:.3f}m'.format(car_off_center), (10, 90))
         #stdout.write("\r{:.3f}m Left of Center, Corner Radius : {:.0f}m".format(car_off_center, self.corner_rad))
 
     return img
