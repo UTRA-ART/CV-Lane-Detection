@@ -9,7 +9,7 @@ from camera import CameraImage, CameraCalibration
 import data
 
 ci = CameraImage()
-
+'''
 # get the undistorted camera matrix
 cal = CameraCalibration()
 check_img = cv2.imread('camera_cal/calibration2.jpg', -1)
@@ -27,7 +27,7 @@ if data.isVideo:
 
 if data.isVideo:
     cam = cv2.VideoCapture(data.img_add)
-    
+   ''' 
 def lane_pipeline(img, show_roi=False, show_lane=True, display_curve=True):
     # pipeline for the current driving lane
     # img : image from the camera in which we need to locate the lane lines
@@ -38,44 +38,44 @@ def lane_pipeline(img, show_roi=False, show_lane=True, display_curve=True):
     # return : original image with added features and fount lane location
 
     # find the edges in the image for line detection
-    pipe_img = drive_lane.driving_lane(img)
+    pipe_img = Lane.driving_lane(img)
     # Warp the image using OpenCV warpPerspective()
-    warped = drive_lane.warp_image(pipe_img)
+    warped = Lane.warp_image(pipe_img)
 
     # get the polynomials of the lane lines
-    left_fit, right_fit = drive_lane.lane_lines(warped, plot_line=False)
+    left_fit, right_fit = Lane.lane_lines(warped, plot_line=False)
 
     # get the moving average for the line data
-    drive_lane.left_fit = drive_lane.left_fit_filter.moving_average(left_fit)
-    drive_lane.right_fit = drive_lane.right_fit_filter.moving_average(right_fit)
+    Lane.left_fit = Lane.left_fit_filter.moving_average(left_fit)
+    Lane.right_fit = Lane.right_fit_filter.moving_average(right_fit)
 
     # find the x and y points for the found quadratics
-    drive_lane.quadratic_line(0, drive_lane.h, left_fit, right_fit, plot=False)
+    Lane.quadratic_line(0, Lane.h, left_fit, right_fit, plot=False)
 
     if show_roi:
         # draw the region of interest on the image
-        img = drive_lane.draw_lane_roi(img, color=(255, 0, 0))
+        img = Lane.draw_lane_roi(img, color=(255, 0, 0))
 
     if show_lane:
         # draw the overlay onto the image
-        img = drive_lane.overlay_lane(img)
+        img = Lane.overlay_lane(img)
 
     if display_curve:
         try:
-            c_rad = drive_lane.lane_lines_radius(drive_lane.h)
-            drive_lane.corner_rad = drive_lane.rad_filter.moving_average(c_rad)
+            c_rad = Lane.lane_lines_radius(Lane.h)
+            Lane.corner_rad = Lane.rad_filter.moving_average(c_rad)
         except:
-            drive_lane.corner_rad = 0
+            Lane.corner_rad = 0
 
-        car_off_center = drive_lane.car_lane_pos()
+        car_off_center = Lane.car_lane_pos()
 
         # add the curviture and vehicle position to the image
-        drive_lane.display_text(img, 'Curve Radius : {:.0f}m'.format(drive_lane.corner_rad), (10, 40))
-        drive_lane.display_text(img, 'Left of center : {:.3f}m'.format(car_off_center), (10, 90))
+        Lane.display_text(img, 'Curve Radius : {:.0f}m'.format(Lane.corner_rad), (10, 40))
+        Lane.display_text(img, 'Left of center : {:.3f}m'.format(car_off_center), (10, 90))
         #stdout.write("\r{:.3f}m Left of Center, Corner Radius : {:.0f}m".format(car_off_center, self.corner_rad))
 
     return img
-
+'''
 while(1):
     # continually loop if the input is a video until it ends of the user presses 'q'
     # if an image execute once and wait till the user presses a key
@@ -83,25 +83,24 @@ while(1):
         ret, image = cam.read()
         if ret == False:
             break
-    else:
-        # read in the image to the program
-        image = cv2.imread(data.img_add, -1)
-        #image = cal.undistort_image(image)
-        cv2.imwrite('output_images/undistorted_car.jpg', image)
+    # read in the image to the program
+    image = cv2.imread(data.img_add, -1)
+    #image = cal.undistort_image(image)
+    cv2.imwrite('output_images/undistorted_car.jpg', image)
 
-    # see if we have already defined the class drive_lane
+    # see if we have already defined the class Lane
     try:
-        drive_lane
+        Lane
     except NameError:
         # first frame call. lets define the variable center_lane
         h, w = image.shape[:2]
 
         focal_point = [w // 2, int(h * data.fph)]
-        drive_lane = Lane(w, h, focal_point=focal_point, roi_height=data.roi_height,
+        Lane = Lane(w, h, focal_point=focal_point, roi_height=data.roi_height,
                            source_pts=[[0, h], [w, h]], lane_length=data.phm)
         # setup the region of interest of the image denoting were the lane
         # will most likely be located from the above coordinates
-        src = drive_lane.lane_roi()
+        src = Lane.lane_roi()
 
     # all the lane calculations for the current driving lane are done here
     lane_img = lane_pipeline(image)
@@ -124,3 +123,4 @@ if data.isVideo:
     cam.release()
 
 cv2.destroyAllWindows()
+'''
