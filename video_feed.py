@@ -1,6 +1,7 @@
 import cv2
 from main import lane_pipeline #importing the function from the other file
-cap = cv2.VideoCapture(0) #capturing video from the camera
+#cap = cv2.VideoCapture(0) #capturing video from the camera
+cap = cv2.VideoCapture('C:\\Users\\Ahsan\\Desktop\\driving vid.mp4')
 while True:
     ret, frame = cap.read() #geting the frame 
     new_img = lane_pipeline(frame, show_roi = False, show_lane = True, display_curve = True) #getting the image with lane overlays drawn
